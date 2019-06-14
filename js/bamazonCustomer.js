@@ -15,19 +15,21 @@ var connection = mysql.createConnection({
 //call back function if no error merch will be displayed
 connection.connect(function(err) {
   if (err) throw err;
-  console.log("Connected!");
+  console.log("Connected: " + connection.threadId);
   //calling function before
   merch();
 });
+
+//display product table and availability of product
 function merch() {
   connection.query("SELECT * FROM  products", function(err, result) {
     if (err) throw err;
-    console.log(result);
     for (var i = 0; i < result.length; i++) {
-      //display products > 0, else
+      //display productstable: id,name,price > 0, else no stock
       var r = result[i];
       if (r.stock_quantity > 0) {
         var price = Number.parseFloat(r.price);
+        var stock = Number.parseFloat(r.stock_quantity);
         console.log(
           "Item ID: " +
             r.item_id +
@@ -36,7 +38,11 @@ function merch() {
             r.product_name +
             "  " +
             "Price: " +
-            price
+            price +
+            " " +
+            "Stock: " +
+            " " +
+            stock
         );
       } else {
         console.log(
@@ -45,7 +51,8 @@ function merch() {
             " " +
             "Name: " +
             r.product_name +
-            ":" +
+            " " +
+            "Stock:" +
             " " +
             "Out of stock my dude!"
         );
@@ -53,87 +60,39 @@ function merch() {
     }
     return purchase();
   });
-  //if stock call purchase function
 }
 function purchase() {
   //use inquirer to ask for item id
   //use inquirer to ask for purchase
-}
-inquirer
-  .prompt([
-    {
-      type: "input",
-      name: "item_id",
-      message: "What is the item id?"
-    },
-    {
-      type: "input",
-      name: "quantity",
-      message: "How many would you like to purchase?"
-    }
-  ])
-  .then(function(product) {
-    var id = product.item_id;
-    var quantity = product.quantity;
-    console.log("ID: ", id);
-    console.log("Quantity: ", quantity);
-
-    instock(quantity, id);
-  });
-
-// Function that will check stock quantity
-function instock(quantity, id) {
-  //select all from products table
-  connection.query("SELECT * FROM products", function(err, res) {
-    if (err) throw err;
-
-    for (var j = 0; j < res.length; j++) {
-      if (res[j].stock_quantity === 0) {
-        console.log(
-          "Item ID: " +
-            res[j].id +
-            " " +
-            "Name: " +
-            res[j].product_name +
-            ":" +
-            " " +
-            "Item is not in stock!"
-        );
-      } else {
-        updateProducts(quantity, id);
-        return merch();
-      }
-    }
-  });
-}
-
-function updateProducts(quantity, id) {
-  var query = connection.query(
-    "UPDATE products SET ? WHERE ?",
-    [
+  inquirer
+    .prompt([
       {
-        stock_quantity: quantity - quantity
+        type: "input",
+        name: "item_id",
+        message: "What is the item id?"
       },
       {
-        item_id: `${id}`
+        type: "input",
+        name: "quantity",
+        message: "How many would you like to purchase?"
       }
-    ],
-    function(err, results) {
-      console.log(results);
-      if (err) {
-        throw err;
-      }
-      if (quantity > results[0]) {
-        var results = results[0].stock_quantity;
-        console.log(
-          "Insufficient quantity, sorry we do not have enough " +
-            results[0].product_name +
-            "to complete your order."
-        );
-      } else {
-        console.log("Your order has been placed successfully!");
-        console.log(results);
-      }
-    }
-  );
+    ])
+    .then(function(answer) {
+      //db if item is greater than zero, purchase, if 0 the item is not available
+      connection.query(
+        "SELECT * FROM products WHERE item_id=?",
+        answer.item_id,
+        function(err, res) {
+          for (var i = 0; i < res.length; i++) {
+            if (answer.quantity > res[i].stock_quantity) {
+              console.log("The selected item is not in stock!");
+
+              purchase();
+            } else {
+              console.log("The selected item is in stock!.");
+            }
+          }
+        }
+      );
+    });
 }
