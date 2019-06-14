@@ -21,7 +21,7 @@ CREATE TABLE products
  price DECIMAL
   (10,2) NOT NULL,
 
-  stock_quantity VARCHAR
+  stock_quantity INTEGER
   (30),
   PRIMARY KEY
   (item_id)

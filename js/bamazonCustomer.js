@@ -119,10 +119,12 @@ function updateProducts(quantity, id) {
       }
     ],
     function(err, results) {
+      console.log(results);
       if (err) {
         throw err;
       }
-      if ((stock_quantity = "")) {
+      if (quantity > results[0]) {
+        var results = results[0].stock_quantity;
         console.log(
           "Insufficient quantity, sorry we do not have enough " +
             results[0].product_name +
