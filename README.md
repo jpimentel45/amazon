@@ -7,6 +7,7 @@ Amazon-like storefront built with MySQL and Node.js.
 2. My Sql
 
 ### Walk Through
+(https://github.com/jpimentel45/amazon/blob/master/screenshot/Screenshot%20(19).png "Logo Title Text 1")
 
 1. CD into folder containing bamazonCustomer.js
 2. In command prompt run node bamazonCustomer.js
@@ -14,6 +15,6 @@ Amazon-like storefront built with MySQL and Node.js.
 4. If in stock item should be purchased
 
    Amazon screenshot:
-   ![Welcome page Screenshot](https://github.com/jpimentel45/amazon/blob/master/screenshot/Screenshot%20(16).png "Logo Title Text 1")
+   ![Welcome page Screenshot](https://github.com/jpimentel45/amazon/blob/master/screenshot/Screenshot%20(20).png "Logo Title Text 1")
    ## Issues
    If item is not in stock, purchase still occurs
