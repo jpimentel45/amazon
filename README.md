@@ -16,4 +16,4 @@ Amazon-like storefront built with MySQL and Node.js.
    Amazon screenshot:
    ![Welcome page Screenshot](https://github.com/jpimentel45/amazon/blob/master/screenshot/Screenshot%20(20).png "Logo Title Text 1")
    ## Issues
-   If item is not in stock, purchase still occurs
+Wierd console display issues for inquierer, and products table
