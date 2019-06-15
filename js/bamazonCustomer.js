@@ -37,8 +37,8 @@ function merch() {
             "Name: " +
             r.product_name +
             "  " +
-            "Price: " +
-            price +
+            "Price: $" +
+            price.toFixed(2) +
             " " +
             "Stock: " +
             " " +
@@ -58,7 +58,7 @@ function merch() {
         );
       }
     }
-    return purchase();
+    purchase();
   });
 }
 function purchase() {
@@ -78,21 +78,57 @@ function purchase() {
       }
     ])
     .then(function(answer) {
-      //db if item is greater than zero, purchase, if 0 the item is not available
+      //db if item is greater than zero, purchase, if else purchase item update quantity, display merch
       connection.query(
         "SELECT * FROM products WHERE item_id=?",
         answer.item_id,
         function(err, res) {
           for (var i = 0; i < res.length; i++) {
             if (answer.quantity > res[i].stock_quantity) {
-              console.log("The selected item is not in stock!");
-
+              console.log(
+                "The selected item: " +
+                  res[i].product_name +
+                  " is not in stock!"
+              );
+              merch();
               purchase();
             } else {
-              console.log("The selected item is in stock!.");
+              console.log(
+                "The selected item: " + res[i].product_name + " is in stock!."
+              );
+              console.log("Department: " + res[i].department_name);
+              console.log("Price: $" + res[i].price.toFixed(2));
+              console.log("Quantity: " + answer.quantity);
+              console.log(
+                "Total: $" + (res[i].price * answer.quantity).toFixed(2)
+              );
+              var quantity = res[i].stock_quantity - answer.quantity;
+              var id = answer.item_id;
+              updateProducts(quantity, id);
+              merch();
+              purchase();
             }
           }
         }
       );
     });
+}
+
+function updateProducts(quantity, id) {
+  var query = connection.query(
+    "UPDATE products SET ? WHERE ?",
+    [
+      {
+        stock_quantity: quantity
+      },
+      {
+        item_id: `${id}`
+      }
+    ],
+    function(err, result) {
+      if (err) {
+        throw err;
+      }
+    }
+  );
 }
